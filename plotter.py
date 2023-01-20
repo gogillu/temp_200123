@@ -25,9 +25,9 @@ def plotClustering(X, M, A, D):
 	colors[np.where(A == -1)[0]] = "0.7" # gray for outliers
 	picks = ['b', 'g', 'r', 'c', 'm', 'k', 'y']
 
-	print 'cluster counts:'
-	print np.unique(A)
-	print [len(np.where(A == i)[0]) for i in np.unique(A)]
+	print('cluster counts:')
+	print(np.unique(A))
+	print([len(np.where(A == i)[0]) for i in np.unique(A)])
 
 	i = 0
 	for c in np.setdiff1d(np.unique(A), [-1]):

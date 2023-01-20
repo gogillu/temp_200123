@@ -23,12 +23,12 @@ def greedy(X, S, k):
 	A = np.setdiff1d(S, M) # A = S \ M
 	dists = np.zeros(len(A))
 
-	for i in xrange(len(A)):
+	for i in range(len(A)):
 		dists[i] = np.linalg.norm(X[A[i]] - X[M[0]]) # euclidean distance
 
 	# print dists
 
-	for i in xrange(1, k):
+	for i in range(1, k):
 		# choose medoid m_i as the farthest from previous medoids
 
 		midx = np.argmax(dists)
@@ -37,7 +37,7 @@ def greedy(X, S, k):
 		M.append(mi)
 				
 		# update the distances, so they reflect the dist to the closest medoid:
-		for j in xrange(len(A)):
+		for j in range(len(A)):
 			dists[j] = min(dists[j], np.linalg.norm(X[A[j]] - X[mi]))
 		
 		# remove mi entries from A and dists:
@@ -54,7 +54,7 @@ def findDimensions(X, k, l, L, Mcurr):
 	Rem = [] # remaining dimensions
 	Mselidx = [] # id of the medoid indexing the dimensions in Zis and Rem
 
-	for i in xrange(len(Mcurr)):
+	for i in range(len(Mcurr)):
 		mi = Mcurr[i]
 		# Xij is the average distance from the points in L_i to m_i
 		# Xij here is an array, containing the avg dists in each dimension
@@ -70,7 +70,7 @@ def findDimensions(X, k, l, L, Mcurr):
 		Di.append(o[1])
 		Dis.append(Di)
 
-		for j in xrange(2,d):
+		for j in range(2,d):
 			Zis.append(Zij[o[j]])
 			Rem.append(o[j])
 			Mselidx.append(i)
@@ -109,10 +109,10 @@ def assignPoints(X, Mcurr, Dis):
 
 	assigns = np.ones(X.shape[0]) * -1
 
-	for i in xrange(X.shape[0]):
+	for i in range(X.shape[0]):
 		minDist = np.inf
 		best = -1
-		for j in xrange(len(Mcurr)):
+		for j in range(len(Mcurr)):
 			dist = manhattanSegmentalDist(X[i], X[Mcurr[j]], Dis[j])
 			if dist < minDist:
 				minDist = dist
@@ -127,7 +127,7 @@ def evaluateClusters(X, assigns, Dis, Mcurr):
 
 	upperSum = 0.0
 
-	for i in xrange(len(Mcurr)):		
+	for i in range(len(Mcurr)):		
 		C = X[np.where(assigns == Mcurr[i])[0]] # points in cluster M_i
 		Cm = C.sum(axis = 0) / C.shape[0] # cluster centroid
 		Ysum = 0.0
@@ -151,7 +151,7 @@ def computeBadMedoids(X, assigns, Dis, Mcurr, minDeviation):
 	# get the medoid with least points:
 	Mbad.append(Mcurr[np.argsort(counts)[0]])
 
-	for i in xrange(len(counts)):
+	for i in range(len(counts)):
 		if counts[i] < cte and Mcurr[i] not in Mbad:
 			Mbad.append(Mcurr[i])
 
@@ -213,7 +213,7 @@ def proclus(X, k = 2, l = 3, minDeviation = 0.1, A = 30, B = 3, niters = 30, see
 		it += 1
 		L = []
 
-		for i in xrange(len(Mcurr)):
+		for i in range(len(Mcurr)):
 			mi = Mcurr[i]
 			# compute delta_i, the distance to the nearest medoid of m_i:
 			di = D[mi,np.setdiff1d(Mcurr, mi)].min()
@@ -238,26 +238,26 @@ def proclus(X, k = 2, l = 3, minDeviation = 0.1, A = 30, B = 3, niters = 30, see
 			Mbest = Mcurr.copy()
 			# compute the bad medoids in Mbest:
 			badM = computeBadMedoids(X, assigns, Dis, Mcurr, minDeviation)
-			print "bad medoids:"
-			print badM
+			print("bad medoids:")
+			print(badM)
 
 		if len(badM) > 0:
 			# replace the bad medoids with random points from M:
-			print "old mcurr:"
-			print Mcurr
+			print("old mcurr:")
+			print(Mcurr)
 			Mavail = np.setdiff1d(M, Mbest)
 			newSel = np.random.choice(Mavail, size = len(badM), replace = False)
 			Mcurr = np.setdiff1d(Mbest, badM)
 			Mcurr = np.union1d(Mcurr, newSel)
-			print "new mcurr:"
-			print Mcurr
+			print("new mcurr:")
+			print(Mcurr)
 
-		print "finished iter: %d" % it
+		print("finished iter: %d" % it)
 
 		if np.allclose(Mold, Mcurr) or it >= niters:
 			break
 
-	print "finished iterative phase..."
+	print("finished iterative phase...")
 
 	###############################
 	# 3.) Refinement phase
@@ -265,7 +265,7 @@ def proclus(X, k = 2, l = 3, minDeviation = 0.1, A = 30, B = 3, niters = 30, see
 
 	# compute a new L based on assignments:
 	L = []
-	for i in xrange(len(Mcurr)):
+	for i in range(len(Mcurr)):
 		mi = Mcurr[i]
 		L.append(np.where(assigns == mi)[0])
 
@@ -277,9 +277,9 @@ def proclus(X, k = 2, l = 3, minDeviation = 0.1, A = 30, B = 3, niters = 30, see
 	# smallest Manhattan segmental distance of m_i to all (k-1)
 	# other medoids with respect to D_i:
 	deltais = np.zeros(k)
-	for i in xrange(k):
+	for i in range(k):
 		minDist = np.inf
-		for j in xrange(k):
+		for j in range(k):
 			if j != i:
 				dist = manhattanSegmentalDist(X[Mcurr[i]], X[Mcurr[j]], Dis[i])
 				if dist < minDist:
@@ -287,9 +287,9 @@ def proclus(X, k = 2, l = 3, minDeviation = 0.1, A = 30, B = 3, niters = 30, see
 		deltais[i] = minDist
 
 	# mark as outliers the points that are not within delta_i of any m_i:
-	for i in xrange(len(assigns)):
+	for i in range(len(assigns)):
 		clustered = False
-		for j in xrange(k):
+		for j in range(k):
 			d = manhattanSegmentalDist(X[Mcurr[j]], X[i], Dis[j])
 			if d <= deltais[j]:
 				clustered = True

@@ -18,7 +18,8 @@ def readarff(fileName, supervision = True):
 	if supervision:
 		X = customload(fileName, usecols = np.arange(ndim - 1))
 		try:
-			supervision = customload(fileName, usecols = [ndim - 1]).astype(np.int)
+			z = customload(fileName, usecols = [ndim - 1])
+			supervision = z #.astype(np.String)
 		except:
 			supervision = customload(fileName, usecols = [ndim - 1], dtype = np.str)
 			supu = np.unique(supervision)
